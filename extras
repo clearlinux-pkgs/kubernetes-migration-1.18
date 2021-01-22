@@ -1,0 +1,8 @@
+/usr/bin/kube-apiserver
+/usr/bin/kube-controller-manager
+/usr/bin/kube-proxy
+/usr/bin/kube-scheduler
+/usr/lib/systemd/system/kube-apiserver.service
+/usr/lib/systemd/system/kube-controller-manager.service
+/usr/lib/systemd/system/kube-proxy.service
+/usr/lib/systemd/system/kube-scheduler.service
