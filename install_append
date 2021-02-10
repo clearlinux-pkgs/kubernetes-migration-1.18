@@ -1,10 +1,10 @@
-mkdir -p %{buildroot}/usr/k8-migration/bin/
+mkdir -p %{buildroot}/usr/k8s-migration/bin/
 
-install -m 755 -d %{buildroot}/usr/k8-migration/bin/
-install -p -m 755 -t %{buildroot}/usr/k8-migration/bin/ ${output_path}/kubeadm
-install -p -m 755 -t %{buildroot}/usr/k8-migration/bin/ ${output_path}/kubectl
-install -p -m 755 -t %{buildroot}/usr/k8-migration/bin/ ${output_path}/kubelet
-install -p -m 755 -t %{buildroot}/usr/k8-migration/bin/ ${output_path}/kube-proxy
-install -p -m 755 -t %{buildroot}/usr/k8-migration/bin/ ${output_path}/kube-controller-manager
-install -p -m 755 -t %{buildroot}/usr/k8-migration/bin/ ${output_path}/kube-scheduler
-install -p -m 755 -t %{buildroot}/usr/k8-migration/bin/ ${output_path}/kube-apiserver
+install -m 755 -d %{buildroot}/usr/k8s-migration/bin/
+install -p -m 755 -t %{buildroot}/usr/k8s-migration/bin/ ${output_path}/kubeadm
+install -p -m 755 -t %{buildroot}/usr/k8s-migration/bin/ ${output_path}/kubectl
+install -p -m 755 -t %{buildroot}/usr/k8s-migration/bin/ ${output_path}/kubelet
+install -p -m 755 -t %{buildroot}/usr/k8s-migration/bin/ ${output_path}/kube-proxy
+install -p -m 755 -t %{buildroot}/usr/k8s-migration/bin/ ${output_path}/kube-controller-manager
+install -p -m 755 -t %{buildroot}/usr/k8s-migration/bin/ ${output_path}/kube-scheduler
+install -p -m 755 -t %{buildroot}/usr/k8s-migration/bin/ ${output_path}/kube-apiserver

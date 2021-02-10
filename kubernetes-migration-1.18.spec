@@ -4,7 +4,7 @@
 #
 Name     : kubernetes-migration-1.18
 Version  : 1.18.15
-Release  : 1
+Release  : 2
 URL      : https://github.com/kubernetes/kubernetes/archive/v1.18.15.tar.gz
 Source0  : https://github.com/kubernetes/kubernetes/archive/v1.18.15.tar.gz
 Summary  : No detailed summary available
@@ -46,7 +46,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1612937189
+export SOURCE_DATE_EPOCH=1612998360
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -82,7 +82,7 @@ EOF
 make test WHAT="`find ./cmd/kubeadm ./pkg/kubectl ./pkg/kubelet/ -name '*_test.go' -exec dirname '{}' \;|sort -u|grep -v -f excludetests|tr '\n' ' '`" || :
 
 %install
-export SOURCE_DATE_EPOCH=1612937189
+export SOURCE_DATE_EPOCH=1612998360
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18
 cp %{_builddir}/kubernetes-1.18.15/Godeps/LICENSES %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c5530f99e2e0d89c97880f199b2e19d285d205b3
@@ -353,27 +353,27 @@ cp %{_builddir}/kubernetes-1.18.15/vendor/sigs.k8s.io/yaml/LICENSE %{buildroot}/
 cp %{_builddir}/kubernetes-1.18.15/vendor/vbom.ml/util/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/8a40bfb169d0050621b1dc706311e3fd62ec65eb
 output_path="_output/bin/"
 ## install_append content
-mkdir -p %{buildroot}/usr/k8-migration/bin/
+mkdir -p %{buildroot}/usr/k8s-migration/bin/
 
-install -m 755 -d %{buildroot}/usr/k8-migration/bin/
-install -p -m 755 -t %{buildroot}/usr/k8-migration/bin/ ${output_path}/kubeadm
-install -p -m 755 -t %{buildroot}/usr/k8-migration/bin/ ${output_path}/kubectl
-install -p -m 755 -t %{buildroot}/usr/k8-migration/bin/ ${output_path}/kubelet
-install -p -m 755 -t %{buildroot}/usr/k8-migration/bin/ ${output_path}/kube-proxy
-install -p -m 755 -t %{buildroot}/usr/k8-migration/bin/ ${output_path}/kube-controller-manager
-install -p -m 755 -t %{buildroot}/usr/k8-migration/bin/ ${output_path}/kube-scheduler
-install -p -m 755 -t %{buildroot}/usr/k8-migration/bin/ ${output_path}/kube-apiserver
+install -m 755 -d %{buildroot}/usr/k8s-migration/bin/
+install -p -m 755 -t %{buildroot}/usr/k8s-migration/bin/ ${output_path}/kubeadm
+install -p -m 755 -t %{buildroot}/usr/k8s-migration/bin/ ${output_path}/kubectl
+install -p -m 755 -t %{buildroot}/usr/k8s-migration/bin/ ${output_path}/kubelet
+install -p -m 755 -t %{buildroot}/usr/k8s-migration/bin/ ${output_path}/kube-proxy
+install -p -m 755 -t %{buildroot}/usr/k8s-migration/bin/ ${output_path}/kube-controller-manager
+install -p -m 755 -t %{buildroot}/usr/k8s-migration/bin/ ${output_path}/kube-scheduler
+install -p -m 755 -t %{buildroot}/usr/k8s-migration/bin/ ${output_path}/kube-apiserver
 ## install_append end
 
 %files
 %defattr(-,root,root,-)
-/usr/k8-migration/bin/kube-apiserver
-/usr/k8-migration/bin/kube-controller-manager
-/usr/k8-migration/bin/kube-proxy
-/usr/k8-migration/bin/kube-scheduler
-/usr/k8-migration/bin/kubeadm
-/usr/k8-migration/bin/kubectl
-/usr/k8-migration/bin/kubelet
+/usr/k8s-migration/bin/kube-apiserver
+/usr/k8s-migration/bin/kube-controller-manager
+/usr/k8s-migration/bin/kube-proxy
+/usr/k8s-migration/bin/kube-scheduler
+/usr/k8s-migration/bin/kubeadm
+/usr/k8s-migration/bin/kubectl
+/usr/k8s-migration/bin/kubelet
 
 %files license
 %defattr(0644,root,root,0755)
