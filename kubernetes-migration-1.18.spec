@@ -4,7 +4,7 @@
 #
 Name     : kubernetes-migration-1.18
 Version  : 1.18.15
-Release  : 3
+Release  : 4
 URL      : https://github.com/kubernetes/kubernetes/archive/v1.18.15.tar.gz
 Source0  : https://github.com/kubernetes/kubernetes/archive/v1.18.15.tar.gz
 Summary  : No detailed summary available
