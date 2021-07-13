@@ -4,7 +4,7 @@
 #
 Name     : kubernetes-migration-1.18
 Version  : 1.18.18
-Release  : 8
+Release  : 9
 URL      : https://github.com/kubernetes/kubernetes/archive/v1.18.18/kubernetes-1.18.18.tar.gz
 Source0  : https://github.com/kubernetes/kubernetes/archive/v1.18.18/kubernetes-1.18.18.tar.gz
 Summary  : No detailed summary available
@@ -17,8 +17,6 @@ BuildRequires : conntrack-tools
 BuildRequires : curl
 BuildRequires : go
 BuildRequires : rsync
-Patch1: 0003-Support-statically-linked-PIE-binaries.patch
-Patch2: 0004-Fix-GOFLAGS-tags-option-processing.patch
 
 %description
 Package warnings implements error handling with non-fatal errors (warnings).
@@ -38,15 +36,13 @@ license components for the kubernetes-migration-1.18 package.
 %prep
 %setup -q -n kubernetes-1.18.18
 cd %{_builddir}/kubernetes-1.18.18
-%patch1 -p1
-%patch2 -p1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1619116687
+export SOURCE_DATE_EPOCH=1626199170
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -55,7 +51,7 @@ export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
 export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
 export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
 export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
-make  %{?_smp_mflags}  all WHAT="cmd/kubeadm cmd/kubectl cmd/kubelet cmd/kube-proxy cmd/kube-controller-manager cmd/kube-apiserver cmd/kube-scheduler" GOFLAGS="-buildmode=pie"
+make  %{?_smp_mflags}  all WHAT="cmd/kubeadm cmd/kubectl cmd/kubelet cmd/kube-proxy cmd/kube-controller-manager cmd/kube-apiserver cmd/kube-scheduler"
 
 
 %check
@@ -82,7 +78,7 @@ EOF
 make test WHAT="`find ./cmd/kubeadm ./pkg/kubectl ./pkg/kubelet/ -name '*_test.go' -exec dirname '{}' \;|sort -u|grep -v -f excludetests|tr '\n' ' '`" || :
 
 %install
-export SOURCE_DATE_EPOCH=1619116687
+export SOURCE_DATE_EPOCH=1626199170
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18
 cp %{_builddir}/kubernetes-1.18.18/Godeps/LICENSES %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c5530f99e2e0d89c97880f199b2e19d285d205b3
