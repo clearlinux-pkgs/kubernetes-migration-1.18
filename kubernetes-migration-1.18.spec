@@ -4,7 +4,7 @@
 #
 Name     : kubernetes-migration-1.18
 Version  : 1.18.20
-Release  : 29
+Release  : 30
 URL      : https://github.com/kubernetes/kubernetes/archive/v1.18.20/kubernetes-1.18.20.tar.gz
 Source0  : https://github.com/kubernetes/kubernetes/archive/v1.18.20/kubernetes-1.18.20.tar.gz
 Summary  : No detailed summary available
@@ -16,6 +16,9 @@ BuildRequires : buildreq-golang
 BuildRequires : curl
 BuildRequires : go
 BuildRequires : rsync
+# Suppress stripping binaries
+%define __strip /bin/true
+%define debug_package %{nil}
 
 %description
 Package warnings implements error handling with non-fatal errors (warnings).
@@ -37,19 +40,22 @@ license components for the kubernetes-migration-1.18 package.
 cd %{_builddir}/kubernetes-1.18.20
 
 %build
+## build_prepend content
+unset CLEAR_DEBUG_TERSE
+## build_prepend end
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1659375714
+export SOURCE_DATE_EPOCH=1677179917
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
-export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=auto "
-export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=auto "
-export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=auto "
-export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=auto "
+export CFLAGS="$CFLAGS -O3 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -g1 -gno-column-info -gno-variable-location-views -gz "
+export FCFLAGS="$FFLAGS -O3 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -g1 -gno-column-info -gno-variable-location-views -gz "
+export FFLAGS="$FFLAGS -O3 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -g1 -gno-column-info -gno-variable-location-views -gz "
+export CXXFLAGS="$CXXFLAGS -O3 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -g1 -gno-column-info -gno-variable-location-views -gz "
 make  %{?_smp_mflags}  all WHAT="cmd/kubeadm cmd/kubectl cmd/kubelet cmd/kube-proxy cmd/kube-controller-manager cmd/kube-apiserver cmd/kube-scheduler"
 
 
@@ -77,275 +83,275 @@ EOF
 make test WHAT="`find ./cmd/kubeadm ./pkg/kubectl ./pkg/kubelet/ -name '*_test.go' -exec dirname '{}' \;|sort -u|grep -v -f excludetests|tr '\n' ' '`" || :
 
 %install
-export SOURCE_DATE_EPOCH=1659375714
+export SOURCE_DATE_EPOCH=1677179917
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18
-cp %{_builddir}/kubernetes-%{version}/Godeps/LICENSES %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c5530f99e2e0d89c97880f199b2e19d285d205b3
-cp %{_builddir}/kubernetes-%{version}/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/logo/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/0bccca1ab4a8eaeeb611df1dbc3b2c0de405d6f7
-cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/api/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/apiextensions-apiserver/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/apimachinery/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/apiserver/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/cli-runtime/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/client-go/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/cloud-provider/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd
-cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/cluster-bootstrap/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/code-generator/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/component-base/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/cri-api/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd
-cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/csi-translation-lib/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd
-cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/kube-aggregator/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/kube-controller-manager/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/kube-proxy/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/kube-scheduler/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/kubectl/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd
-cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/kubelet/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/legacy-cloud-providers/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd
-cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/metrics/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd
-cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/sample-apiserver/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/sample-cli-plugin/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/sample-controller/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/third_party/forked/golang/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7f7a12bcfc16fab2522aa1a562fd3d2aee429d3b
-cp %{_builddir}/kubernetes-%{version}/third_party/forked/gonum/graph/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/10a1514324a7532df8dbfec34898595caad63c97
-cp %{_builddir}/kubernetes-%{version}/third_party/forked/ipvs/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c700a8b9312d24bdc57570f7d6a131cf63d89016
-cp %{_builddir}/kubernetes-%{version}/third_party/forked/shell2junit/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/571ff79d612fa3127682f13cce9d20870b91ca9a
-cp %{_builddir}/kubernetes-%{version}/third_party/go-srcimporter/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d6a5f1ecaedd723c325a2063375b3517e808a2b5
-cp %{_builddir}/kubernetes-%{version}/third_party/intemp/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/third_party/multiarch/qemu-user-static/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7f15664449d0996ef171252d4573814d406f9970
-cp %{_builddir}/kubernetes-%{version}/vendor/bitbucket.org/bertimus9/systemstat/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/84e4b26c5d172361e072d43cf99b4277b7e66213
-cp %{_builddir}/kubernetes-%{version}/vendor/cloud.google.com/go/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/Azure/azure-sdk-for-go/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/861181924d993ee58a17a2c3c3a3faecf895849c
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/Azure/go-ansiterm/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/836ef1b46953afdb78ce3929bc6831ca83620b65
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/Azure/go-autorest/autorest/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/308c47a3ea356402d2d14241da9a9f64cf404008
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/Azure/go-autorest/autorest/adal/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/308c47a3ea356402d2d14241da9a9f64cf404008
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/Azure/go-autorest/autorest/date/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/308c47a3ea356402d2d14241da9a9f64cf404008
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/Azure/go-autorest/autorest/mocks/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/308c47a3ea356402d2d14241da9a9f64cf404008
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/Azure/go-autorest/autorest/to/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/308c47a3ea356402d2d14241da9a9f64cf404008
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/Azure/go-autorest/autorest/validation/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/308c47a3ea356402d2d14241da9a9f64cf404008
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/Azure/go-autorest/logger/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/308c47a3ea356402d2d14241da9a9f64cf404008
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/Azure/go-autorest/tracing/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/308c47a3ea356402d2d14241da9a9f64cf404008
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/BurntSushi/toml/COPYING %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/f9cab757896ef6b3570e62b2df7fb63ab1a34b80
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/GoogleCloudPlatform/k8s-cloud-provider/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/JeffAshton/win_pdh/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/db170a1a3711f86e4ce228a9fe74e101315900f8
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/MakeNowJust/heredoc/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/43c02fe811dfc96363cdd8ec756ecc728ab845a9
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/Microsoft/go-winio/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/11a8fec351554e8f6c3f4dac5a1f4049dd467ba8
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/Microsoft/hcsshim/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/56b820712432e458f05f883566ca8cd85dcdaad5
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/NYTimes/gziphandler/LICENSE.md %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/1e76d86c632eee303dd79f8eeddc7e90f05ae6e7
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/PuerkitoBio/purell/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/33cd8e150548e595fbe201c6ca9df582976e71db
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/PuerkitoBio/urlesc/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7f7a12bcfc16fab2522aa1a562fd3d2aee429d3b
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/armon/circbuf/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/5d06409981dfdb6c13963148f9a18c5c3eaac4fe
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/asaskevich/govalidator/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/f0524399083fa802c72bc733a5e12ed1342c650f
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/aws/aws-sdk-go/LICENSE.txt %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/bazelbuild/bazel-gazelle/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/bazelbuild/buildtools/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/5278551877931cca80444a20320c4b47a5e67f5b
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/beorn7/perks/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/b2e4520feb0f9b51ad373256b94c3faf4c1e6871
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/blang/semver/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/16e22f58039363cff486afeac52bde18cd4ab5b3
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/caddyserver/caddy/LICENSE.txt %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/cespare/prettybench/LICENSE.txt %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/cb4eb772c0cebbb7e42e176db6a083dce93b8d53
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/chai2010/gettext-go/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d2380e2e17049c3c901600a03ddb55e2a743b8b1
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/checkpoint-restore/go-criu/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/cilium/ebpf/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/27a6200050717015f18fdbd39387845787ce81a9
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/client9/misspell/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/1c6d99235866009d3ee6b9010e5fc3a83e28aa02
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/clusterhq/flocker-go/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/3b248eb62196f5229af87e485d166af3efa1920e
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/container-storage-interface/spec/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/containerd/console/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7df059597099bb7dcf25d2a9aedfaf4465f72d8d
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/containerd/containerd/LICENSE.code %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/376caa2cd54c4196280157d071524614350e7ce8
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/containerd/containerd/LICENSE.docs %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/dbadfa1b256ef9b81238983d67f33f457cee8b38
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/containernetworking/cni/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/669a1e53b9dd9df3474300d3d959bb85bad75945
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/coredns/corefile-migration/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7df059597099bb7dcf25d2a9aedfaf4465f72d8d
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/coreos/go-oidc/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c700a8b9312d24bdc57570f7d6a131cf63d89016
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/coreos/go-semver/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/coreos/go-systemd/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/172ca3bbafe312a1cf09cfff26953db2f425c28e
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/coreos/pkg/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c700a8b9312d24bdc57570f7d6a131cf63d89016
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/cpuguy83/go-md2man/LICENSE.md %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/b7a606730713ac061594edab33cf941704b4a95c
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/cyphar/filepath-securejoin/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/8fb92f475d78da1315877a719c6856fc64531d30
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/davecgh/go-spew/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d2f340a01dd48b589a70f627cf7058c585a315e4
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/daviddengcn/go-colortext/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/f1adc08862de0a11fd79ebf42560ebf0c6fc163b
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/dgrijalva/jwt-go/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/b132e03c6b6bd85fbc2394f808acae8f5d0ebaf0
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/docker/distribution/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c700a8b9312d24bdc57570f7d6a131cf63d89016
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/docker/docker/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/20b06a68cf65738d43afa04acce0126f341c77f8
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/docker/docker/NOTICE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/ea2531724c168e1e53717622d1bf302554225f2b
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/docker/go-connections/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/3110e55750143a84918d7423febc9c83a55bc28c
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/docker/go-units/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/3110e55750143a84918d7423febc9c83a55bc28c
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/docker/spdystream/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c6821d75aac4a65fae7d56a425e304beb3689c26
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/docker/spdystream/LICENSE.docs %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/979fd7d5c67073b265d96f584aac3de1c419b8e2
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/dustin/go-humanize/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/4b5f40487c165cf31691824a93d375fcb65ea30a
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/elazarl/goproxy/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/38973a004e1799ac0edfa96e48084e6d1e250a74
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/emicklei/go-restful/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/a8993f4a51771a0333dbbc5b1c4395a2ccaa4d9f
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/euank/go-kmsg-parser/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/evanphx/json-patch/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/17c7cd81bb03c410ed4fb4859c3caf55d16e8cab
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/exponent-io/jsonpath/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/9a06b8c36ca519c5a7c67f102bf5d03aae470fa1
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/fatih/camelcase/LICENSE.md %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2afef5b6ec0b4453f0b1d7afac0b97168620aa84
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/fatih/color/LICENSE.md %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/563519fec7769aaec054ee06cb429f39f0fdab89
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/fsnotify/fsnotify/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7b421b3d8f9fe9dc8158b5e6efed1c448605ba92
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/ghodss/yaml/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/271aeaf56ee621c5accfc2a9db0b10717e038eaf
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-bindata/go-bindata/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/26afd744d51f209774536d35d572f71c1e74d399
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-openapi/analysis/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-openapi/errors/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-openapi/jsonpointer/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-openapi/jsonreference/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-openapi/loads/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-openapi/runtime/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-openapi/spec/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-openapi/spec/license.go %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/555e9ac61d94352b3c2935e77b51fc6dc31d4822
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-openapi/strfmt/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-openapi/swag/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-openapi/validate/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-ozzo/ozzo-validation/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/dcd46e245c73bf7f3fce422324e61a1ed1389f64
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-stack/stack/LICENSE.md %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/dca7490956b1b8aae95c007079b9447067e0deb3
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/godbus/dbus/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/994658c265db5dbf456fa6163905cc9c0b3bda46
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/gogo/protobuf/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/06b27345acae9303e13dde9974d2b2e318b05989
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/golang/groupcache/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/172ca3bbafe312a1cf09cfff26953db2f425c28e
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/golang/mock/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/golang/protobuf/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/aa9b240f558caed367795f667629ccbca28f20b2
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/google/btree/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/google/cadvisor/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/9a88528c347f38ee07f8e982f710f8acd1283c5c
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/google/go-cmp/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7080652cc78cd9855d39e324529a3b5f3745dcd6
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/google/gofuzz/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/google/uuid/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/08021ae73f58f423dd6e7b525e81cf2520f7619e
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/googleapis/gnostic/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/5a7d7df655ba40478fae80a6abafc6afc36f9b6a
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/gophercloud/gophercloud/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/01e537267fca176b08cd25a4e6e6a7092ed3c734
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/gorilla/websocket/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/307711a68aa375a23d90191db6f720426cf88402
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/gregjones/httpcache/LICENSE.txt %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/21b9915e693e6d81b3908c83fb59687aec46029b
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/grpc-ecosystem/go-grpc-middleware/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/482a69af7e9431b91119f958a5ee57f4c149808b
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/grpc-ecosystem/go-grpc-prometheus/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/482a69af7e9431b91119f958a5ee57f4c149808b
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/grpc-ecosystem/grpc-gateway/LICENSE.txt %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c2add16c875ec7abad9c453d0a0c325dc814e8f2
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/hashicorp/golang-lru/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/ece3df1263c100f93c427face535a292723d38e7
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/hashicorp/hcl/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/523489384296f403da31edf8edf6f9023d328517
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/heketi/heketi/COPYING-GPLV2 %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/4cc77b90af91e615a64ae04893fdffa7939db84c
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/heketi/heketi/COPYING-LGPLV3 %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/f45ee1c765646813b442ca58de72e20a64a7ddba
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/heketi/heketi/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/b782e7268198e14de43085d29b562f726155f3f5
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/heketi/heketi/LICENSE-APACHE2 %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/3d9ca858ae047e05c8c031e24b41aea21417fc2a
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/hpcloud/tail/LICENSE.txt %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/a792f3e236631b46c9ea1a9f86ab3a6c24b17c89
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/hpcloud/tail/ratelimiter/Licence %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/15e225f105ead05a4d06cdf7723bb6ec11e92304
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/imdario/mergo/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/eecfc0c7e0930c6ba1ed0ff2d46a0a6fa0d16d6c
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/inconshreveable/mousetrap/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/9174f93c54ad0022bbb9b445480cfb6b4217226a
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/jmespath/go-jmespath/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/4052101a660a7d8343c13ada130123f75f1dd408
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/jonboulle/clockwork/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92a74693f02c8e78dd90b2014c52bc35a95bab86
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/json-iterator/go/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/810612ee8c1872b7ee4dba34c090ebd8f7491aa1
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/karrick/godirwalk/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c417175a81fb9bc4533718b795ab1a32ed8a20c3
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/konsorten/go-windows-terminal-sequences/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/e2ee43b586677eaafd7dd7af25adff48adfa7cf3
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/libopenstorage/openstorage/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/10c49f46877c0b19cfe5b35c7b4d939a4f040a3c
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/liggitt/tabwriter/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d6a5f1ecaedd723c325a2063375b3517e808a2b5
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/lithammer/dedent/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/15e016aa59e286c89747f6e00ab37a19ed3b694a
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/magiconair/properties/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/20d7220031a3670d7696be5330ebae9f49861d3b
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/mailru/easyjson/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/554fb441fbb1607579b7c9f8e9d7fab5d00e3a51
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/mattn/go-colorable/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/5ca808f075931c5322193d4afd5a3370c824f810
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/mattn/go-isatty/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/5b53018d7f0706e49275a92d36b54cfbfbb71367
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/mattn/go-shellwords/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/f7f33fde14de785a3ac53f250bb746ba30844639
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/matttproud/golang_protobuf_extensions/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/miekg/dns/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/26e1f3d7ee1c4eaf99177653ea5bec4be7268e8d
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/mindprince/gonvml/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/mistifyio/go-zfs/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/b3c529b8fb7f1d56db7381bc7ef5f481ea2ac2a4
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/mitchellh/go-wordwrap/LICENSE.md %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d676a57141ac47c27699fc8b03e1a2e59abb96ef
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/mitchellh/mapstructure/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/5ad2002bc8d2b22e2034867d159f71ba6258e18f
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/modern-go/concurrent/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7df059597099bb7dcf25d2a9aedfaf4465f72d8d
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/modern-go/reflect2/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7df059597099bb7dcf25d2a9aedfaf4465f72d8d
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/mohae/deepcopy/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/a5f476652d39f384dae35765771739c16175bbf2
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/morikuni/aec/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/3faf341fbc32621fe1ac089ae2ab7a23980fc189
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/mrunalp/fileutils/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/8ff574408142cd6bbb2a1b83302de24cb7b35e8b
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/munnerz/goautoneg/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/3486abfdd66d1bd30f9edeeb779a7f04d043d457
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/mvdan/xurls/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/626866343039d137644ba84e733379ceb8c14d5a
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/mxk/go-flowrate/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/43caeb543b78e31d617e7b7e6e5d156a79f8da30
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/onsi/ginkgo/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/9f1b6690bcfc732123ae209c90c62f2ba80dfcb0
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/onsi/ginkgo/reporters/stenographer/support/go-colorable/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/5ca808f075931c5322193d4afd5a3370c824f810
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/onsi/ginkgo/reporters/stenographer/support/go-isatty/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/5b53018d7f0706e49275a92d36b54cfbfbb71367
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/onsi/gomega/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/9f1b6690bcfc732123ae209c90c62f2ba80dfcb0
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/opencontainers/go-digest/LICENSE.code %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/76a37a42a06aa6e231383fb93d9161f074d5962b
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/opencontainers/go-digest/LICENSE.docs %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/979fd7d5c67073b265d96f584aac3de1c419b8e2
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/opencontainers/image-spec/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/298850a6cdb155f54cfa44641df70b36228ed031
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/opencontainers/runc/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/8ff574408142cd6bbb2a1b83302de24cb7b35e8b
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/opencontainers/runtime-spec/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/552b909d29bd260c886142a969b462c85f976dcd
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/opencontainers/selinux/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/pelletier/go-toml/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/cba29923f92249281f98723c1294f9b2546c50b0
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/peterbourgon/diskv/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/87a1773b9070fa0f9d4033df28f9bcba336279b1
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/pkg/errors/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/9c1bedc0d42f24c24a1bd266f3ce101a4b0579fc
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/pmezard/go-difflib/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/cd3e4d932cee20da681e6b3bee8139cb4f734034
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/pquerna/cachecontrol/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/prometheus/client_golang/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7df059597099bb7dcf25d2a9aedfaf4465f72d8d
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/prometheus/client_golang/NOTICE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/fd6460234f122a19f21affb6d6885269340b9176
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/prometheus/client_model/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7df059597099bb7dcf25d2a9aedfaf4465f72d8d
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/prometheus/common/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7df059597099bb7dcf25d2a9aedfaf4465f72d8d
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/prometheus/procfs/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7df059597099bb7dcf25d2a9aedfaf4465f72d8d
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/quobyte/api/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/f82ae4ba17844e5a794ac24573a4b9f120298cb6
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/robfig/cron/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c9db72c449a8f0e6434f2accd468c6774f2e96d6
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/rubiojr/go-vhd/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/49a2b81e1bec00da5ccbbf4db85652629039fafe
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/russross/blackfriday/LICENSE.txt %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/da34754c05d40ff81f91de8c1b85ea6e5503e21d
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/satori/go.uuid/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/b4b35a8138ee83256aca752d3813d3d0757d8380
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/seccomp/libseccomp-golang/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/cd87737b0bbdeee650f6a72ee61209863b1d827f
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/sirupsen/logrus/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/a1c7852c717fed2c9a0284ed112ea66013230da6
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/soheilhy/cmux/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/spf13/afero/LICENSE.txt %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c7feacb4667f8c63c89e2eeeb9a913bd3ced8ac2
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/spf13/cast/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/feb9285b75d0c82a47d32e7d4dc84eb02db9ee34
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/spf13/cobra/LICENSE.txt %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c7feacb4667f8c63c89e2eeeb9a913bd3ced8ac2
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/spf13/jwalterweatherman/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/feb9285b75d0c82a47d32e7d4dc84eb02db9ee34
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/spf13/pflag/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/b3c86ae465b21f7323059db335158b48187731c7
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/spf13/viper/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/feb9285b75d0c82a47d32e7d4dc84eb02db9ee34
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/storageos/go-api/LICENCE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/8b30ef2902028e6acb72c57f8ef2bd91215bf0b2
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/stretchr/objx/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/9d0e87d9ac5974470fc21c575854718e8b6516be
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/stretchr/testify/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/136eeb14eace5be586388a959df1108bdb3575ac
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/syndtr/gocapability/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/a44bfde22babd7c7e1ccac9ca31f85a09358769f
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/thecodeteam/goscaleio/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c700a8b9312d24bdc57570f7d6a131cf63d89016
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/tmc/grpc-websocket-proxy/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/5d0bb8a310ebc5a6c71291424fecaaa61d35d06a
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/vishvananda/netlink/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/f88291c879c4ee329bfa341b54eaedd29d3058cf
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/vishvananda/netns/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/f88291c879c4ee329bfa341b54eaedd29d3058cf
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/vmware/govmomi/LICENSE.txt %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/vmware/govmomi/simulator/license_manager.go %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/1aa19820fa7c753c5362c4bfb391ca2e8f12b2e2
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/vmware/govmomi/vim25/xml/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7f7a12bcfc16fab2522aa1a562fd3d2aee429d3b
-cp %{_builddir}/kubernetes-%{version}/vendor/github.com/xiang90/probing/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/a228db5619f63de687597fad76e64d719ef0732e
-cp %{_builddir}/kubernetes-%{version}/vendor/go.etcd.io/bbolt/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/66c5c002958b1f31f74410b353972d622d74e007
-cp %{_builddir}/kubernetes-%{version}/vendor/go.etcd.io/etcd/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/go.mongodb.org/mongo-driver/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7df059597099bb7dcf25d2a9aedfaf4465f72d8d
-cp %{_builddir}/kubernetes-%{version}/vendor/go.opencensus.io/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/1128f8f91104ba9ef98d37eea6523a888dcfa5de
-cp %{_builddir}/kubernetes-%{version}/vendor/go.uber.org/atomic/LICENSE.txt %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/fa2149c34ba4570e3325d4e09aee1b7f32d76679
-cp %{_builddir}/kubernetes-%{version}/vendor/go.uber.org/multierr/LICENSE.txt %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/5761b1b12cf8cb4d42446dc11f5db436d40c0484
-cp %{_builddir}/kubernetes-%{version}/vendor/go.uber.org/zap/LICENSE.txt %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/e721d2f494384c806fef4b5fed9e8a2b6d6ff5db
-cp %{_builddir}/kubernetes-%{version}/vendor/golang.org/x/crypto/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d6a5f1ecaedd723c325a2063375b3517e808a2b5
-cp %{_builddir}/kubernetes-%{version}/vendor/golang.org/x/lint/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/98bd4176f4779516009b9effebe10231c836470d
-cp %{_builddir}/kubernetes-%{version}/vendor/golang.org/x/net/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d6a5f1ecaedd723c325a2063375b3517e808a2b5
-cp %{_builddir}/kubernetes-%{version}/vendor/golang.org/x/oauth2/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d6a5f1ecaedd723c325a2063375b3517e808a2b5
-cp %{_builddir}/kubernetes-%{version}/vendor/golang.org/x/sync/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d6a5f1ecaedd723c325a2063375b3517e808a2b5
-cp %{_builddir}/kubernetes-%{version}/vendor/golang.org/x/sys/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d6a5f1ecaedd723c325a2063375b3517e808a2b5
-cp %{_builddir}/kubernetes-%{version}/vendor/golang.org/x/text/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d6a5f1ecaedd723c325a2063375b3517e808a2b5
-cp %{_builddir}/kubernetes-%{version}/vendor/golang.org/x/time/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d6a5f1ecaedd723c325a2063375b3517e808a2b5
-cp %{_builddir}/kubernetes-%{version}/vendor/golang.org/x/tools/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d6a5f1ecaedd723c325a2063375b3517e808a2b5
-cp %{_builddir}/kubernetes-%{version}/vendor/gonum.org/v1/gonum/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/f4de14cc01698a2dc45d9a22782ea1491cd6737d
-cp %{_builddir}/kubernetes-%{version}/vendor/google.golang.org/api/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/ab32a5c14ccc0a6d38e173568a5577493e3f6870
-cp %{_builddir}/kubernetes-%{version}/vendor/google.golang.org/api/googleapi/internal/uritemplates/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/e99e0980a6d8f06248a213a988ba1bb3c8d4a76b
-cp %{_builddir}/kubernetes-%{version}/vendor/google.golang.org/appengine/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/google.golang.org/genproto/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/google.golang.org/grpc/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/gopkg.in/fsnotify.v1/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7b421b3d8f9fe9dc8158b5e6efed1c448605ba92
-cp %{_builddir}/kubernetes-%{version}/vendor/gopkg.in/gcfg.v1/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/580c0a1f1386fe13bce395d23bdaf3b14ae2e20b
-cp %{_builddir}/kubernetes-%{version}/vendor/gopkg.in/inf.v0/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/580c0a1f1386fe13bce395d23bdaf3b14ae2e20b
-cp %{_builddir}/kubernetes-%{version}/vendor/gopkg.in/natefinch/lumberjack.v2/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/e68e8233f9f3f98beae645e2275928408c7061ef
-cp %{_builddir}/kubernetes-%{version}/vendor/gopkg.in/square/go-jose.v2/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/gopkg.in/square/go-jose.v2/json/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7f7a12bcfc16fab2522aa1a562fd3d2aee429d3b
-cp %{_builddir}/kubernetes-%{version}/vendor/gopkg.in/tomb.v1/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/178b27feb961b28990b377da59e9d43d868a0a6f
-cp %{_builddir}/kubernetes-%{version}/vendor/gopkg.in/warnings.v0/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/318dc4af5ea975b426db65053b4f16ca91341d15
-cp %{_builddir}/kubernetes-%{version}/vendor/gopkg.in/yaml.v2/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd
-cp %{_builddir}/kubernetes-%{version}/vendor/gopkg.in/yaml.v2/LICENSE.libyaml %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/ad00ce7340d89dc13ccc59920ef75cb55af5b164
-cp %{_builddir}/kubernetes-%{version}/vendor/gopkg.in/yaml.v2/NOTICE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/9522d95b2b9b284285cc3fb6ecc445aa3ee5e785
-cp %{_builddir}/kubernetes-%{version}/vendor/gotest.tools/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c3001aa5b380f41731de929c562043693d7eb1ca
-cp %{_builddir}/kubernetes-%{version}/vendor/gotest.tools/gotestsum/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/honnef.co/go/tools/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/8915daad8348f4e700326b8718cea800f4019227
-cp %{_builddir}/kubernetes-%{version}/vendor/honnef.co/go/tools/LICENSE-THIRD-PARTY %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/6d621f8afa6f9532523a139272542f52b3f3ef7a
-cp %{_builddir}/kubernetes-%{version}/vendor/honnef.co/go/tools/lint/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/1f622793f7f27ea21f01f7e9e5e5fe9a966a2990
-cp %{_builddir}/kubernetes-%{version}/vendor/honnef.co/go/tools/ssa/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/829d9ad13947a70dd887ae8796e174e4a9d01e0c
-cp %{_builddir}/kubernetes-%{version}/vendor/k8s.io/gengo/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/8d27fd734630787bf68266a7f4fb6b4c55cd6853
-cp %{_builddir}/kubernetes-%{version}/vendor/k8s.io/heapster/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92a74693f02c8e78dd90b2014c52bc35a95bab86
-cp %{_builddir}/kubernetes-%{version}/vendor/k8s.io/klog/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/172ca3bbafe312a1cf09cfff26953db2f425c28e
-cp %{_builddir}/kubernetes-%{version}/vendor/k8s.io/kube-openapi/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/k8s.io/repo-infra/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd
-cp %{_builddir}/kubernetes-%{version}/vendor/k8s.io/system-validators/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd
-cp %{_builddir}/kubernetes-%{version}/vendor/k8s.io/utils/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/kubernetes-%{version}/vendor/k8s.io/utils/inotify/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d6a5f1ecaedd723c325a2063375b3517e808a2b5
-cp %{_builddir}/kubernetes-%{version}/vendor/sigs.k8s.io/apiserver-network-proxy/konnectivity-client/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd
-cp %{_builddir}/kubernetes-%{version}/vendor/sigs.k8s.io/kustomize/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd
-cp %{_builddir}/kubernetes-%{version}/vendor/sigs.k8s.io/structured-merge-diff/v3/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd
-cp %{_builddir}/kubernetes-%{version}/vendor/sigs.k8s.io/yaml/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/271aeaf56ee621c5accfc2a9db0b10717e038eaf
-cp %{_builddir}/kubernetes-%{version}/vendor/vbom.ml/util/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/8a40bfb169d0050621b1dc706311e3fd62ec65eb
+cp %{_builddir}/kubernetes-%{version}/Godeps/LICENSES %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c5530f99e2e0d89c97880f199b2e19d285d205b3 || :
+cp %{_builddir}/kubernetes-%{version}/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/logo/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/0bccca1ab4a8eaeeb611df1dbc3b2c0de405d6f7 || :
+cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/api/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/apiextensions-apiserver/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/apimachinery/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/apiserver/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/cli-runtime/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/client-go/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/cloud-provider/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd || :
+cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/cluster-bootstrap/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/code-generator/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/component-base/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/cri-api/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd || :
+cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/csi-translation-lib/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd || :
+cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/kube-aggregator/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/kube-controller-manager/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/kube-proxy/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/kube-scheduler/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/kubectl/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd || :
+cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/kubelet/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/legacy-cloud-providers/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd || :
+cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/metrics/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd || :
+cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/sample-apiserver/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/sample-cli-plugin/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/staging/src/k8s.io/sample-controller/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/third_party/forked/golang/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7f7a12bcfc16fab2522aa1a562fd3d2aee429d3b || :
+cp %{_builddir}/kubernetes-%{version}/third_party/forked/gonum/graph/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/10a1514324a7532df8dbfec34898595caad63c97 || :
+cp %{_builddir}/kubernetes-%{version}/third_party/forked/ipvs/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c700a8b9312d24bdc57570f7d6a131cf63d89016 || :
+cp %{_builddir}/kubernetes-%{version}/third_party/forked/shell2junit/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/571ff79d612fa3127682f13cce9d20870b91ca9a || :
+cp %{_builddir}/kubernetes-%{version}/third_party/go-srcimporter/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d6a5f1ecaedd723c325a2063375b3517e808a2b5 || :
+cp %{_builddir}/kubernetes-%{version}/third_party/intemp/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/third_party/multiarch/qemu-user-static/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7f15664449d0996ef171252d4573814d406f9970 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/bitbucket.org/bertimus9/systemstat/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/84e4b26c5d172361e072d43cf99b4277b7e66213 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/cloud.google.com/go/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/Azure/azure-sdk-for-go/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/861181924d993ee58a17a2c3c3a3faecf895849c || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/Azure/go-ansiterm/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/836ef1b46953afdb78ce3929bc6831ca83620b65 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/Azure/go-autorest/autorest/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/308c47a3ea356402d2d14241da9a9f64cf404008 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/Azure/go-autorest/autorest/adal/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/308c47a3ea356402d2d14241da9a9f64cf404008 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/Azure/go-autorest/autorest/date/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/308c47a3ea356402d2d14241da9a9f64cf404008 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/Azure/go-autorest/autorest/mocks/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/308c47a3ea356402d2d14241da9a9f64cf404008 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/Azure/go-autorest/autorest/to/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/308c47a3ea356402d2d14241da9a9f64cf404008 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/Azure/go-autorest/autorest/validation/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/308c47a3ea356402d2d14241da9a9f64cf404008 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/Azure/go-autorest/logger/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/308c47a3ea356402d2d14241da9a9f64cf404008 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/Azure/go-autorest/tracing/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/308c47a3ea356402d2d14241da9a9f64cf404008 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/BurntSushi/toml/COPYING %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/f9cab757896ef6b3570e62b2df7fb63ab1a34b80 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/GoogleCloudPlatform/k8s-cloud-provider/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/JeffAshton/win_pdh/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/db170a1a3711f86e4ce228a9fe74e101315900f8 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/MakeNowJust/heredoc/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/43c02fe811dfc96363cdd8ec756ecc728ab845a9 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/Microsoft/go-winio/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/11a8fec351554e8f6c3f4dac5a1f4049dd467ba8 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/Microsoft/hcsshim/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/56b820712432e458f05f883566ca8cd85dcdaad5 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/NYTimes/gziphandler/LICENSE.md %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/1e76d86c632eee303dd79f8eeddc7e90f05ae6e7 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/PuerkitoBio/purell/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/33cd8e150548e595fbe201c6ca9df582976e71db || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/PuerkitoBio/urlesc/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7f7a12bcfc16fab2522aa1a562fd3d2aee429d3b || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/armon/circbuf/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/5d06409981dfdb6c13963148f9a18c5c3eaac4fe || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/asaskevich/govalidator/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/f0524399083fa802c72bc733a5e12ed1342c650f || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/aws/aws-sdk-go/LICENSE.txt %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/bazelbuild/bazel-gazelle/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/bazelbuild/buildtools/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/5278551877931cca80444a20320c4b47a5e67f5b || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/beorn7/perks/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/b2e4520feb0f9b51ad373256b94c3faf4c1e6871 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/blang/semver/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/16e22f58039363cff486afeac52bde18cd4ab5b3 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/caddyserver/caddy/LICENSE.txt %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/cespare/prettybench/LICENSE.txt %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/cb4eb772c0cebbb7e42e176db6a083dce93b8d53 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/chai2010/gettext-go/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d2380e2e17049c3c901600a03ddb55e2a743b8b1 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/checkpoint-restore/go-criu/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/cilium/ebpf/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/27a6200050717015f18fdbd39387845787ce81a9 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/client9/misspell/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/1c6d99235866009d3ee6b9010e5fc3a83e28aa02 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/clusterhq/flocker-go/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/3b248eb62196f5229af87e485d166af3efa1920e || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/container-storage-interface/spec/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/containerd/console/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7df059597099bb7dcf25d2a9aedfaf4465f72d8d || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/containerd/containerd/LICENSE.code %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/376caa2cd54c4196280157d071524614350e7ce8 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/containerd/containerd/LICENSE.docs %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/dbadfa1b256ef9b81238983d67f33f457cee8b38 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/containernetworking/cni/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/669a1e53b9dd9df3474300d3d959bb85bad75945 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/coredns/corefile-migration/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7df059597099bb7dcf25d2a9aedfaf4465f72d8d || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/coreos/go-oidc/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c700a8b9312d24bdc57570f7d6a131cf63d89016 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/coreos/go-semver/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/coreos/go-systemd/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/172ca3bbafe312a1cf09cfff26953db2f425c28e || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/coreos/pkg/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c700a8b9312d24bdc57570f7d6a131cf63d89016 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/cpuguy83/go-md2man/LICENSE.md %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/b7a606730713ac061594edab33cf941704b4a95c || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/cyphar/filepath-securejoin/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/8fb92f475d78da1315877a719c6856fc64531d30 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/davecgh/go-spew/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d2f340a01dd48b589a70f627cf7058c585a315e4 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/daviddengcn/go-colortext/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/f1adc08862de0a11fd79ebf42560ebf0c6fc163b || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/dgrijalva/jwt-go/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/b132e03c6b6bd85fbc2394f808acae8f5d0ebaf0 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/docker/distribution/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c700a8b9312d24bdc57570f7d6a131cf63d89016 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/docker/docker/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/20b06a68cf65738d43afa04acce0126f341c77f8 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/docker/docker/NOTICE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/ea2531724c168e1e53717622d1bf302554225f2b || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/docker/go-connections/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/3110e55750143a84918d7423febc9c83a55bc28c || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/docker/go-units/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/3110e55750143a84918d7423febc9c83a55bc28c || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/docker/spdystream/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c6821d75aac4a65fae7d56a425e304beb3689c26 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/docker/spdystream/LICENSE.docs %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/979fd7d5c67073b265d96f584aac3de1c419b8e2 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/dustin/go-humanize/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/4b5f40487c165cf31691824a93d375fcb65ea30a || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/elazarl/goproxy/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/38973a004e1799ac0edfa96e48084e6d1e250a74 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/emicklei/go-restful/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/a8993f4a51771a0333dbbc5b1c4395a2ccaa4d9f || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/euank/go-kmsg-parser/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/evanphx/json-patch/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/17c7cd81bb03c410ed4fb4859c3caf55d16e8cab || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/exponent-io/jsonpath/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/9a06b8c36ca519c5a7c67f102bf5d03aae470fa1 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/fatih/camelcase/LICENSE.md %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2afef5b6ec0b4453f0b1d7afac0b97168620aa84 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/fatih/color/LICENSE.md %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/563519fec7769aaec054ee06cb429f39f0fdab89 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/fsnotify/fsnotify/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7b421b3d8f9fe9dc8158b5e6efed1c448605ba92 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/ghodss/yaml/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/271aeaf56ee621c5accfc2a9db0b10717e038eaf || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-bindata/go-bindata/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/26afd744d51f209774536d35d572f71c1e74d399 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-openapi/analysis/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-openapi/errors/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-openapi/jsonpointer/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-openapi/jsonreference/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-openapi/loads/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-openapi/runtime/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-openapi/spec/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-openapi/spec/license.go %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/555e9ac61d94352b3c2935e77b51fc6dc31d4822 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-openapi/strfmt/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-openapi/swag/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-openapi/validate/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-ozzo/ozzo-validation/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/dcd46e245c73bf7f3fce422324e61a1ed1389f64 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/go-stack/stack/LICENSE.md %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/dca7490956b1b8aae95c007079b9447067e0deb3 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/godbus/dbus/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/994658c265db5dbf456fa6163905cc9c0b3bda46 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/gogo/protobuf/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/06b27345acae9303e13dde9974d2b2e318b05989 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/golang/groupcache/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/172ca3bbafe312a1cf09cfff26953db2f425c28e || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/golang/mock/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/golang/protobuf/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/aa9b240f558caed367795f667629ccbca28f20b2 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/google/btree/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/google/cadvisor/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/9a88528c347f38ee07f8e982f710f8acd1283c5c || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/google/go-cmp/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7080652cc78cd9855d39e324529a3b5f3745dcd6 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/google/gofuzz/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/google/uuid/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/08021ae73f58f423dd6e7b525e81cf2520f7619e || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/googleapis/gnostic/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/5a7d7df655ba40478fae80a6abafc6afc36f9b6a || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/gophercloud/gophercloud/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/01e537267fca176b08cd25a4e6e6a7092ed3c734 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/gorilla/websocket/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/307711a68aa375a23d90191db6f720426cf88402 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/gregjones/httpcache/LICENSE.txt %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/21b9915e693e6d81b3908c83fb59687aec46029b || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/grpc-ecosystem/go-grpc-middleware/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/482a69af7e9431b91119f958a5ee57f4c149808b || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/grpc-ecosystem/go-grpc-prometheus/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/482a69af7e9431b91119f958a5ee57f4c149808b || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/grpc-ecosystem/grpc-gateway/LICENSE.txt %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c2add16c875ec7abad9c453d0a0c325dc814e8f2 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/hashicorp/golang-lru/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/ece3df1263c100f93c427face535a292723d38e7 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/hashicorp/hcl/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/523489384296f403da31edf8edf6f9023d328517 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/heketi/heketi/COPYING-GPLV2 %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/4cc77b90af91e615a64ae04893fdffa7939db84c || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/heketi/heketi/COPYING-LGPLV3 %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/f45ee1c765646813b442ca58de72e20a64a7ddba || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/heketi/heketi/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/b782e7268198e14de43085d29b562f726155f3f5 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/heketi/heketi/LICENSE-APACHE2 %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/3d9ca858ae047e05c8c031e24b41aea21417fc2a || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/hpcloud/tail/LICENSE.txt %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/a792f3e236631b46c9ea1a9f86ab3a6c24b17c89 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/hpcloud/tail/ratelimiter/Licence %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/15e225f105ead05a4d06cdf7723bb6ec11e92304 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/imdario/mergo/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/eecfc0c7e0930c6ba1ed0ff2d46a0a6fa0d16d6c || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/inconshreveable/mousetrap/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/9174f93c54ad0022bbb9b445480cfb6b4217226a || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/jmespath/go-jmespath/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/4052101a660a7d8343c13ada130123f75f1dd408 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/jonboulle/clockwork/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92a74693f02c8e78dd90b2014c52bc35a95bab86 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/json-iterator/go/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/810612ee8c1872b7ee4dba34c090ebd8f7491aa1 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/karrick/godirwalk/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c417175a81fb9bc4533718b795ab1a32ed8a20c3 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/konsorten/go-windows-terminal-sequences/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/e2ee43b586677eaafd7dd7af25adff48adfa7cf3 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/libopenstorage/openstorage/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/10c49f46877c0b19cfe5b35c7b4d939a4f040a3c || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/liggitt/tabwriter/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d6a5f1ecaedd723c325a2063375b3517e808a2b5 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/lithammer/dedent/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/15e016aa59e286c89747f6e00ab37a19ed3b694a || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/magiconair/properties/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/20d7220031a3670d7696be5330ebae9f49861d3b || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/mailru/easyjson/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/554fb441fbb1607579b7c9f8e9d7fab5d00e3a51 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/mattn/go-colorable/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/5ca808f075931c5322193d4afd5a3370c824f810 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/mattn/go-isatty/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/5b53018d7f0706e49275a92d36b54cfbfbb71367 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/mattn/go-shellwords/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/f7f33fde14de785a3ac53f250bb746ba30844639 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/matttproud/golang_protobuf_extensions/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/miekg/dns/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/26e1f3d7ee1c4eaf99177653ea5bec4be7268e8d || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/mindprince/gonvml/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/mistifyio/go-zfs/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/b3c529b8fb7f1d56db7381bc7ef5f481ea2ac2a4 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/mitchellh/go-wordwrap/LICENSE.md %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d676a57141ac47c27699fc8b03e1a2e59abb96ef || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/mitchellh/mapstructure/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/5ad2002bc8d2b22e2034867d159f71ba6258e18f || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/modern-go/concurrent/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7df059597099bb7dcf25d2a9aedfaf4465f72d8d || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/modern-go/reflect2/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7df059597099bb7dcf25d2a9aedfaf4465f72d8d || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/mohae/deepcopy/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/a5f476652d39f384dae35765771739c16175bbf2 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/morikuni/aec/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/3faf341fbc32621fe1ac089ae2ab7a23980fc189 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/mrunalp/fileutils/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/8ff574408142cd6bbb2a1b83302de24cb7b35e8b || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/munnerz/goautoneg/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/3486abfdd66d1bd30f9edeeb779a7f04d043d457 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/mvdan/xurls/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/626866343039d137644ba84e733379ceb8c14d5a || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/mxk/go-flowrate/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/43caeb543b78e31d617e7b7e6e5d156a79f8da30 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/onsi/ginkgo/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/9f1b6690bcfc732123ae209c90c62f2ba80dfcb0 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/onsi/ginkgo/reporters/stenographer/support/go-colorable/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/5ca808f075931c5322193d4afd5a3370c824f810 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/onsi/ginkgo/reporters/stenographer/support/go-isatty/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/5b53018d7f0706e49275a92d36b54cfbfbb71367 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/onsi/gomega/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/9f1b6690bcfc732123ae209c90c62f2ba80dfcb0 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/opencontainers/go-digest/LICENSE.code %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/76a37a42a06aa6e231383fb93d9161f074d5962b || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/opencontainers/go-digest/LICENSE.docs %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/979fd7d5c67073b265d96f584aac3de1c419b8e2 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/opencontainers/image-spec/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/298850a6cdb155f54cfa44641df70b36228ed031 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/opencontainers/runc/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/8ff574408142cd6bbb2a1b83302de24cb7b35e8b || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/opencontainers/runtime-spec/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/552b909d29bd260c886142a969b462c85f976dcd || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/opencontainers/selinux/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/pelletier/go-toml/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/cba29923f92249281f98723c1294f9b2546c50b0 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/peterbourgon/diskv/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/87a1773b9070fa0f9d4033df28f9bcba336279b1 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/pkg/errors/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/9c1bedc0d42f24c24a1bd266f3ce101a4b0579fc || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/pmezard/go-difflib/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/cd3e4d932cee20da681e6b3bee8139cb4f734034 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/pquerna/cachecontrol/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/prometheus/client_golang/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7df059597099bb7dcf25d2a9aedfaf4465f72d8d || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/prometheus/client_golang/NOTICE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/fd6460234f122a19f21affb6d6885269340b9176 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/prometheus/client_model/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7df059597099bb7dcf25d2a9aedfaf4465f72d8d || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/prometheus/common/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7df059597099bb7dcf25d2a9aedfaf4465f72d8d || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/prometheus/procfs/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7df059597099bb7dcf25d2a9aedfaf4465f72d8d || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/quobyte/api/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/f82ae4ba17844e5a794ac24573a4b9f120298cb6 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/robfig/cron/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c9db72c449a8f0e6434f2accd468c6774f2e96d6 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/rubiojr/go-vhd/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/49a2b81e1bec00da5ccbbf4db85652629039fafe || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/russross/blackfriday/LICENSE.txt %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/da34754c05d40ff81f91de8c1b85ea6e5503e21d || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/satori/go.uuid/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/b4b35a8138ee83256aca752d3813d3d0757d8380 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/seccomp/libseccomp-golang/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/cd87737b0bbdeee650f6a72ee61209863b1d827f || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/sirupsen/logrus/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/a1c7852c717fed2c9a0284ed112ea66013230da6 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/soheilhy/cmux/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/spf13/afero/LICENSE.txt %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c7feacb4667f8c63c89e2eeeb9a913bd3ced8ac2 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/spf13/cast/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/feb9285b75d0c82a47d32e7d4dc84eb02db9ee34 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/spf13/cobra/LICENSE.txt %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c7feacb4667f8c63c89e2eeeb9a913bd3ced8ac2 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/spf13/jwalterweatherman/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/feb9285b75d0c82a47d32e7d4dc84eb02db9ee34 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/spf13/pflag/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/b3c86ae465b21f7323059db335158b48187731c7 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/spf13/viper/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/feb9285b75d0c82a47d32e7d4dc84eb02db9ee34 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/storageos/go-api/LICENCE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/8b30ef2902028e6acb72c57f8ef2bd91215bf0b2 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/stretchr/objx/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/9d0e87d9ac5974470fc21c575854718e8b6516be || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/stretchr/testify/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/136eeb14eace5be586388a959df1108bdb3575ac || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/syndtr/gocapability/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/a44bfde22babd7c7e1ccac9ca31f85a09358769f || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/thecodeteam/goscaleio/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c700a8b9312d24bdc57570f7d6a131cf63d89016 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/tmc/grpc-websocket-proxy/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/5d0bb8a310ebc5a6c71291424fecaaa61d35d06a || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/vishvananda/netlink/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/f88291c879c4ee329bfa341b54eaedd29d3058cf || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/vishvananda/netns/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/f88291c879c4ee329bfa341b54eaedd29d3058cf || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/vmware/govmomi/LICENSE.txt %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/vmware/govmomi/simulator/license_manager.go %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/1aa19820fa7c753c5362c4bfb391ca2e8f12b2e2 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/vmware/govmomi/vim25/xml/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7f7a12bcfc16fab2522aa1a562fd3d2aee429d3b || :
+cp %{_builddir}/kubernetes-%{version}/vendor/github.com/xiang90/probing/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/a228db5619f63de687597fad76e64d719ef0732e || :
+cp %{_builddir}/kubernetes-%{version}/vendor/go.etcd.io/bbolt/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/66c5c002958b1f31f74410b353972d622d74e007 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/go.etcd.io/etcd/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/go.mongodb.org/mongo-driver/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7df059597099bb7dcf25d2a9aedfaf4465f72d8d || :
+cp %{_builddir}/kubernetes-%{version}/vendor/go.opencensus.io/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/1128f8f91104ba9ef98d37eea6523a888dcfa5de || :
+cp %{_builddir}/kubernetes-%{version}/vendor/go.uber.org/atomic/LICENSE.txt %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/fa2149c34ba4570e3325d4e09aee1b7f32d76679 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/go.uber.org/multierr/LICENSE.txt %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/5761b1b12cf8cb4d42446dc11f5db436d40c0484 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/go.uber.org/zap/LICENSE.txt %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/e721d2f494384c806fef4b5fed9e8a2b6d6ff5db || :
+cp %{_builddir}/kubernetes-%{version}/vendor/golang.org/x/crypto/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d6a5f1ecaedd723c325a2063375b3517e808a2b5 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/golang.org/x/lint/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/98bd4176f4779516009b9effebe10231c836470d || :
+cp %{_builddir}/kubernetes-%{version}/vendor/golang.org/x/net/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d6a5f1ecaedd723c325a2063375b3517e808a2b5 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/golang.org/x/oauth2/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d6a5f1ecaedd723c325a2063375b3517e808a2b5 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/golang.org/x/sync/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d6a5f1ecaedd723c325a2063375b3517e808a2b5 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/golang.org/x/sys/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d6a5f1ecaedd723c325a2063375b3517e808a2b5 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/golang.org/x/text/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d6a5f1ecaedd723c325a2063375b3517e808a2b5 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/golang.org/x/time/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d6a5f1ecaedd723c325a2063375b3517e808a2b5 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/golang.org/x/tools/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d6a5f1ecaedd723c325a2063375b3517e808a2b5 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/gonum.org/v1/gonum/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/f4de14cc01698a2dc45d9a22782ea1491cd6737d || :
+cp %{_builddir}/kubernetes-%{version}/vendor/google.golang.org/api/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/ab32a5c14ccc0a6d38e173568a5577493e3f6870 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/google.golang.org/api/googleapi/internal/uritemplates/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/e99e0980a6d8f06248a213a988ba1bb3c8d4a76b || :
+cp %{_builddir}/kubernetes-%{version}/vendor/google.golang.org/appengine/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/google.golang.org/genproto/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/google.golang.org/grpc/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/gopkg.in/fsnotify.v1/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7b421b3d8f9fe9dc8158b5e6efed1c448605ba92 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/gopkg.in/gcfg.v1/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/580c0a1f1386fe13bce395d23bdaf3b14ae2e20b || :
+cp %{_builddir}/kubernetes-%{version}/vendor/gopkg.in/inf.v0/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/580c0a1f1386fe13bce395d23bdaf3b14ae2e20b || :
+cp %{_builddir}/kubernetes-%{version}/vendor/gopkg.in/natefinch/lumberjack.v2/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/e68e8233f9f3f98beae645e2275928408c7061ef || :
+cp %{_builddir}/kubernetes-%{version}/vendor/gopkg.in/square/go-jose.v2/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/gopkg.in/square/go-jose.v2/json/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/7f7a12bcfc16fab2522aa1a562fd3d2aee429d3b || :
+cp %{_builddir}/kubernetes-%{version}/vendor/gopkg.in/tomb.v1/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/178b27feb961b28990b377da59e9d43d868a0a6f || :
+cp %{_builddir}/kubernetes-%{version}/vendor/gopkg.in/warnings.v0/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/318dc4af5ea975b426db65053b4f16ca91341d15 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/gopkg.in/yaml.v2/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd || :
+cp %{_builddir}/kubernetes-%{version}/vendor/gopkg.in/yaml.v2/LICENSE.libyaml %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/ad00ce7340d89dc13ccc59920ef75cb55af5b164 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/gopkg.in/yaml.v2/NOTICE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/9522d95b2b9b284285cc3fb6ecc445aa3ee5e785 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/gotest.tools/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/c3001aa5b380f41731de929c562043693d7eb1ca || :
+cp %{_builddir}/kubernetes-%{version}/vendor/gotest.tools/gotestsum/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/honnef.co/go/tools/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/8915daad8348f4e700326b8718cea800f4019227 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/honnef.co/go/tools/LICENSE-THIRD-PARTY %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/6d621f8afa6f9532523a139272542f52b3f3ef7a || :
+cp %{_builddir}/kubernetes-%{version}/vendor/honnef.co/go/tools/lint/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/1f622793f7f27ea21f01f7e9e5e5fe9a966a2990 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/honnef.co/go/tools/ssa/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/829d9ad13947a70dd887ae8796e174e4a9d01e0c || :
+cp %{_builddir}/kubernetes-%{version}/vendor/k8s.io/gengo/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/8d27fd734630787bf68266a7f4fb6b4c55cd6853 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/k8s.io/heapster/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92a74693f02c8e78dd90b2014c52bc35a95bab86 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/k8s.io/klog/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/172ca3bbafe312a1cf09cfff26953db2f425c28e || :
+cp %{_builddir}/kubernetes-%{version}/vendor/k8s.io/kube-openapi/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/k8s.io/repo-infra/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd || :
+cp %{_builddir}/kubernetes-%{version}/vendor/k8s.io/system-validators/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd || :
+cp %{_builddir}/kubernetes-%{version}/vendor/k8s.io/utils/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/k8s.io/utils/inotify/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/d6a5f1ecaedd723c325a2063375b3517e808a2b5 || :
+cp %{_builddir}/kubernetes-%{version}/vendor/sigs.k8s.io/apiserver-network-proxy/konnectivity-client/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd || :
+cp %{_builddir}/kubernetes-%{version}/vendor/sigs.k8s.io/kustomize/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd || :
+cp %{_builddir}/kubernetes-%{version}/vendor/sigs.k8s.io/structured-merge-diff/v3/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/92170cdc034b2ff819323ff670d3b7266c8bffcd || :
+cp %{_builddir}/kubernetes-%{version}/vendor/sigs.k8s.io/yaml/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/271aeaf56ee621c5accfc2a9db0b10717e038eaf || :
+cp %{_builddir}/kubernetes-%{version}/vendor/vbom.ml/util/LICENSE %{buildroot}/usr/share/package-licenses/kubernetes-migration-1.18/8a40bfb169d0050621b1dc706311e3fd62ec65eb || :
 output_path="_output/bin/"
 ## install_append content
 mkdir -p %{buildroot}/usr/k8s-migration/bin/
